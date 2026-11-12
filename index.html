@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ChronoFusion AI – Smart Watch</title>
+<style>
+:root{--acc:#d8b36a;--acc2:#f6e2b3;--ink:#f6f2ea;--mut:#9aa4ae;--bg:#06080b;--card:#ffffff12}
+[data-t=cyan]{--acc:#5fd0e8;--acc2:#b4f0fa}[data-t=emerald]{--acc:#6fd3a0;--acc2:#c6f3dc}[data-t=rose]{--acc:#f08aa0;--acc2:#ffd0da}[data-t=titanium]{--acc:#c9d1d9;--acc2:#fff}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 20%,#1b222b,#04060a);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:8px;font-family:"Inter","Roboto","Segoe UI",system-ui,sans-serif;color:var(--ink)}
+#box{position:relative}
+.watch{position:absolute;left:0;top:0;width:466px;height:466px;border-radius:50%;transform-origin:0 0;background:conic-gradient(from 210deg,#3a424d,#0d1116 25%,#2b323b 50%,#0d1116 75%,#3a424d);box-shadow:0 30px 70px #000c,inset 0 3px 4px #fff3;overflow:hidden;touch-action:pan-y;user-select:none}
+.face{position:absolute;inset:14px;border-radius:50%;background:radial-gradient(circle at 50% 15%,#1d252f,var(--bg) 68%);box-shadow:inset 0 0 40px #000}
+.dial{position:absolute;left:-14px;top:-14px;width:466px;height:466px;transition:opacity .3s}.watch:not([data-p="0"]) .dial{opacity:.22}
+.pg{position:absolute;left:-14px;top:-14px;width:466px;height:466px;display:none}.pg.on{display:block}
+.pg>*{position:absolute}.ttl{left:0;right:0;top:62px;text-align:center;font-size:21px;letter-spacing:6px;color:var(--acc);font-weight:700}
+.time{left:0;right:0;top:132px;text-align:center;font-weight:700;font-size:112px;line-height:1;letter-spacing:-2px;font-variant-numeric:tabular-nums;text-shadow:0 0 28px color-mix(in srgb,var(--acc) 40%,transparent)}
+.st{left:150px;right:150px;top:60px;display:flex;justify-content:space-between;align-items:center;font-size:22px;color:var(--acc);font-weight:700}
+.r1{left:98px;right:98px;top:268px;display:flex;justify-content:space-between;align-items:center;white-space:nowrap;font-size:26px;font-weight:600;letter-spacing:1px;color:var(--mut)}.r1 .w{display:flex;gap:8px;align-items:center;color:var(--ink)}
+.pill{left:64px;right:64px;top:326px;height:64px;display:flex;justify-content:space-between;align-items:center;padding:0 22px;border-radius:32px;background:var(--card);border:1px solid #ffffff22;font-size:24px;font-weight:700}.c{display:flex;align-items:center;gap:7px}
+.hands{display:none}.an .hands{display:block}.an .time,.an .pill,.an #day{display:none}.an .r1{top:292px}
+.g{left:66px;right:66px;top:100px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.k{height:78px;border-radius:20px;background:var(--card);border:1px solid #ffffff22;padding:8px 10px;display:flex;align-items:center;gap:8px}.k b{display:block;font-size:26px;line-height:1.1}.k i{font-style:normal;font-size:21px;color:var(--mut)}
+.leg{left:60px;right:60px;top:352px;display:flex;justify-content:space-between;font-size:22px;font-weight:700}
+.big{left:0;right:0;top:140px;text-align:center;font-size:62px;font-weight:700;font-variant-numeric:tabular-nums}
+.bt{border:0;border-radius:28px;background:var(--acc);color:#05070a;font-weight:700;font-size:22px;font-family:inherit;height:56px;cursor:pointer}.bt.s{background:#262d35;color:var(--ink)}
+.row{left:80px;right:80px;top:248px;display:flex;gap:10px}.row .bt{flex:1}
+.hl{outline:3px solid var(--acc);outline-offset:6px;border-radius:30px}
+.dots{position:absolute;left:0;right:0;bottom:20px;display:flex;justify-content:center;gap:2px;z-index:3}.dots button{width:26px;height:26px;background:none;border:0;padding:0;cursor:pointer}.dots button::after{content:"";display:block;margin:auto;width:10px;height:10px;border-radius:50%;background:#59626d}.dots .on::after{background:var(--acc);width:14px}
+.amb{background:#000;box-shadow:0 0 0 2px #222}.amb .face{background:#000;box-shadow:none}.amb .pg{display:none}.amb #p0{display:block}.amb .time{font-weight:300;color:#d8d8d8;text-shadow:none}.amb .pill,.amb .st,.amb .minor,.amb .arc,.amb .dots,.amb .hands{display:none}.amb .r1{color:#999}.amb .dial{opacity:1!important}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:640px}.ctl button{background:#12171d;color:var(--ink);border:1px solid #2a313a;border-radius:20px;padding:8px 14px;font-weight:600;font-size:.88rem;font-family:inherit;cursor:pointer}.ctl button:focus-visible{outline:3px solid var(--acc)}.ctl .sw{width:30px;height:30px;padding:0;border-radius:50%;background:var(--c)}
+#cap{max-width:520px;text-align:center;color:var(--mut);min-height:48px;font-size:.95rem}
+body.embed .ctl,body.embed #cap{display:none}body.embed{background:transparent;padding:0;min-height:0}
+
+.watch::after{content:"";position:absolute;inset:0;border-radius:50%;background:repeating-radial-gradient(circle,#ffffff0d 0 1px,transparent 1px 3px);-webkit-mask:radial-gradient(circle,transparent 218px,#000 219px);mask:radial-gradient(circle,transparent 218px,#000 219px);pointer-events:none}
+.face::before{content:"";position:absolute;inset:0;border-radius:50%;background:repeating-linear-gradient(90deg,#ffffff07 0 1px,transparent 1px 4px),radial-gradient(circle at 50% 0,#ffffff12,transparent 55%);pointer-events:none}
+.time{font-weight:600;letter-spacing:-3px}.co{font-style:normal;color:var(--acc);margin:0 -2px;position:relative;top:-4px}
+.hair{left:140px;right:140px;height:1px;background:linear-gradient(90deg,transparent,var(--acc),transparent)}.an .hair,.an .ecl{display:none}
+.dv{width:1px;height:30px;background:#ffffff2a}
+.ecl{left:216px;top:90px;width:34px;height:34px;filter:drop-shadow(0 0 6px color-mix(in srgb,var(--acc) 60%,transparent))}
+#comet{filter:drop-shadow(0 0 7px var(--acc))}
+#p5 [data-i] svg{width:64px;height:64px}
+.disc{left:183px;top:108px;width:100px;height:100px;border-radius:50%;background:conic-gradient(var(--acc),#2b323b,var(--acc2),#2b323b,var(--acc));animation:sp 6s linear infinite;animation-play-state:paused}.disc.on{animation-play-state:running}.disc::after{content:"";position:absolute;left:41px;top:41px;width:18px;height:18px;border-radius:50%;background:#0b0e12}
+.bre{left:183px;top:112px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,var(--acc2),var(--acc) 60%,transparent 72%);animation:br 8s ease-in-out infinite;animation-play-state:paused}
+@keyframes sp{to{transform:rotate(360deg)}}@keyframes br{0%,100%{transform:scale(.7)}50%{transform:scale(1.7)}}
+.amb .face{filter:brightness(.85)}.amb .face::before,.amb .watch::after,.amb .ecl,.amb #comet,.amb .hair{display:none}
+.amb .time{color:transparent;-webkit-text-stroke:2.5px #d8d8d8;text-shadow:none;font-weight:600}.amb .co{color:#d8d8d8;-webkit-text-stroke:0}.amb #ticks line{stroke:#5b4d2e}
+</style></head><body>
+<div id="box"><div class="watch" id="watch" data-t="gold" data-p="0" role="img" aria-label="Smart watch face"><div class="face">
+<svg class="dial" viewBox="0 0 466 466" aria-hidden="true"><g id="ticks"></g>
+<circle class="arc" id="arc" cx="233" cy="233" r="198" fill="none" stroke="var(--acc)" stroke-width="6" stroke-linecap="round" stroke-dasharray="1244" stroke-dashoffset="1244" transform="rotate(-90 233 233)"/><circle id="comet" r="7" fill="var(--acc2)" cx="233" cy="35"/>
+<g class="hands" id="hands" fill="var(--ink)" font-size="30" font-weight="700" text-anchor="middle"><text x="233" y="82" fill="var(--acc)">12</text><text x="394" y="243">3</text><text x="233" y="404">6</text><text x="72" y="243">9</text>
+<line id="hh" x1="233" y1="233" x2="233" y2="150" stroke="var(--ink)" stroke-width="11" stroke-linecap="round"/><line id="mh" x1="233" y1="233" x2="233" y2="105" stroke="var(--ink)" stroke-width="7" stroke-linecap="round"/><line id="sh" x1="233" y1="250" x2="233" y2="95" stroke="var(--acc)" stroke-width="3" stroke-linecap="round"/><circle cx="233" cy="233" r="9" fill="var(--acc)"/></g></svg>
+<section class="pg on" id="p0"><div class="st"><span data-i="bt"></span><span id="day">WED</span><span data-i="bell"></span></div>
+<svg class="ecl" viewBox="0 0 30 30" aria-hidden="true"><defs><clipPath id="ecc"><circle cx="15" cy="15" r="13"/></clipPath></defs><circle cx="15" cy="15" r="13" fill="var(--acc)"/><circle id="ecm" cx="42" cy="15" r="13" fill="#0b0e12" clip-path="url(#ecc)"/><circle cx="15" cy="15" r="13.5" fill="none" stroke="var(--acc2)" stroke-width="1"/></svg><div class="hair" style="top:258px"></div>
+<div class="time" id="time"><span id="hm">10:08</span></div>
+<div class="r1"><span id="date">11/11/2026</span><span class="w"><span data-i="sun"></span><span id="wx">26°C</span></span></div>
+<div class="pill" id="pill"><span class="c"><span data-i="heart" data-c="#ff6b7a"></span><b id="hr">72</b></span><i class="dv"></i><span class="c"><span data-i="steps"></span><b id="st0">8,542</b></span><i class="dv"></i><span class="c"><svg width="30" height="28" viewBox="0 0 30 28" fill="none" stroke="var(--ink)" stroke-width="2.5"><rect x="2" y="7" width="22" height="14" rx="3"/><path d="M27 12v4"/><rect id="bf" x="4.5" y="9.5" width="17" height="9" rx="1.5" fill="var(--acc)" stroke="none"/></svg><b id="bt">85%</b></span></div></section>
+<section class="pg" id="p1"><div class="ttl">HEALTH</div><div class="g">
+<div class="k"><span data-i="heart" data-c="#ff6b7a"></span><div><b id="h1">72</b><i>BPM</i></div></div><div class="k"><span data-i="drop"></span><div><b id="h2">98%</b><i>SpO2</i></div></div>
+<div class="k"><span data-i="bp"></span><div><b>118/78</b><i>BP</i></div></div><div class="k"><span data-i="wave"></span><div><b id="h4">24%</b><i>Stress</i></div></div>
+<div class="k"><span data-i="moon"></span><div><b>7h 45m</b><i>Sleep</i></div></div><div class="k"><span data-i="temp"></span><div><b>36.6°</b><i>Temp</i></div></div></div></section>
+<section class="pg" id="p2"><div class="ttl">ACTIVITY</div>
+<svg style="left:0;top:0" width="466" height="466" viewBox="0 0 466 466" fill="none" stroke-width="18" stroke-linecap="round" transform="rotate(-90)"><g transform="rotate(-90 233 215) rotate(90 233 215)"></g>
+<g transform="rotate(-90 233 205)"><circle cx="233" cy="205" r="104" stroke="#ffffff14"/><circle cx="233" cy="205" r="82" stroke="#ffffff14"/><circle cx="233" cy="205" r="60" stroke="#ffffff14"/>
+<circle id="r1" cx="233" cy="205" r="104" stroke="var(--acc)" stroke-dasharray="653"/><circle id="r2" cx="233" cy="205" r="82" stroke="#5fd0e8" stroke-dasharray="515"/><circle id="r3" cx="233" cy="205" r="60" stroke="#ff6b7a" stroke-dasharray="377"/></g></svg>
+<div class="leg"><span class="c"><span data-i="steps"></span><span id="a1">8,542</span></span><span class="c"><span data-i="flame" data-c="#5fd0e8"></span><span id="a2">342</span></span><span class="c"><span data-i="pin" data-c="#ff6b7a"></span><span id="a3">6.4 km</span></span></div></section>
+<section class="pg" id="p3"><div class="ttl">TOOLS</div><div class="big" id="swt">00:00.00</div>
+<div class="row"><button class="bt" id="sg">Start</button><button class="bt s" id="sr">Reset</button></div><div class="row" style="top:316px"><button class="bt s" id="sm">Mode: Stopwatch</button></div></section>
+<section class="pg" id="p4"><div class="ttl">COMPASS</div>
+<svg style="left:0;top:0" width="466" height="466" viewBox="0 0 466 466" text-anchor="middle" font-size="24" font-weight="700"><circle cx="233" cy="205" r="92" fill="none" stroke="#ffffff22" stroke-width="3"/><text x="233" y="130" fill="var(--acc)">N</text><text x="333" y="213" fill="var(--ink)">E</text><text x="233" y="296" fill="var(--ink)">S</text><text x="133" y="213" fill="var(--ink)">W</text>
+<g id="nd"><path d="M233 140l12 65h-24z" fill="#ff6b7a"/><path d="M233 270l12-65h-24z" fill="var(--ink)"/></g></svg>
+<div class="r1" style="top:308px;justify-content:center" id="hd">NE 45°</div><button class="bt" id="sos" style="left:150px;width:166px;top:356px;background:#e5484d;color:#fff;border-radius:28px">SOS (hold)</button></section>
+<section class="pg" id="p5"><div class="ttl">WEATHER</div>
+<div style="left:0;right:0;top:108px;text-align:center;white-space:nowrap"><span data-i="sun"></span> <b style="font-size:70px;vertical-align:middle;margin-left:14px">26°</b></div>
+<div class="r1" style="top:196px;justify-content:center;color:var(--ink)">Sunny · Feels 27°</div>
+<div class="leg" style="top:250px;text-align:center;color:var(--mut);font-weight:500"><span>11AM<br><b style="color:var(--ink);font-size:24px">27°</b></span><span>12PM<br><b style="color:var(--ink);font-size:24px">28°</b></span><span>1PM<br><b style="color:var(--ink);font-size:24px">29°</b></span><span>2PM<br><b style="color:var(--ink);font-size:24px">28°</b></span><span>3PM<br><b style="color:var(--ink);font-size:24px">26°</b></span></div>
+<div class="r1" style="top:340px;justify-content:center;color:var(--ink)">H 29°  L 21°</div></section>
+<section class="pg" id="p6"><div class="ttl">NOW PLAYING</div><div class="disc" id="disc"></div>
+<div class="r1" id="trk" style="top:232px;justify-content:center;color:var(--ink);font-weight:700">Time Your Way</div><div class="r1" style="top:266px;justify-content:center;font-size:21px">Original Mix</div>
+<div style="left:100px;right:100px;top:302px;height:6px;border-radius:3px;background:#ffffff1c"><i id="mp" style="display:block;height:100%;width:30%;background:var(--acc);border-radius:3px"></i></div>
+<div class="row" style="top:324px;left:74px;right:74px"><button class="bt s" id="mpv">Prev</button><button class="bt" id="mpl">Play</button><button class="bt s" id="mnx">Next</button></div></section>
+<section class="pg" id="p7"><div class="ttl">BREATHE</div><div class="bre" id="bre"></div><div class="r1" id="bz" style="top:300px;justify-content:center;color:var(--ink);font-size:26px;font-weight:700">Ready</div><button class="bt" id="bb" style="left:150px;width:166px;top:342px">Start</button></section>
+</div><div class="dots" id="dots"></div></div></div>
+<div id="cap" aria-live="polite"></div>
+<div class="ctl" id="ctl"><button id="bp">&#8249; Prev</button><button id="bn">Next &#8250;</button><button id="b1">Ambient</button><button id="b3">Analog</button><button id="b2">Workout</button>
+<button class="sw" data-c="gold" style="--c:#d8b36a" aria-label="Gold"></button><button class="sw" data-c="cyan" style="--c:#5fd0e8" aria-label="Cyan"></button><button class="sw" data-c="emerald" style="--c:#6fd3a0" aria-label="Emerald"></button><button class="sw" data-c="rose" style="--c:#f08aa0" aria-label="Rose"></button><button class="sw" data-c="titanium" style="--c:#c9d1d9" aria-label="Titanium"></button>
+<button id="ts" style="background:#d8b36a;color:#000">&#9654; START TOUR</button><button id="te" style="background:#c8344d" disabled>&#9209; STOP TOUR</button></div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],q=new URLSearchParams(location.search),W=$('#watch'),fx=q.get('t');
+const p2=n=>String(n).padStart(2,'0'),R=(a,b)=>a+Math.random()*(b-a),emb=!!q.get('embed');
+const I={heart:'M12 21s-8-5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 10c0 6-8 11-8 11z',drop:'M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z',bp:'M3 18a9 9 0 0 1 18 0M12 18l4-7',wave:'M2 12h4l3-7 4 14 3-7h6',moon:'M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10z',temp:'M10 14V5a2 2 0 0 1 4 0v9a4 4 0 1 1-4 0z',steps:'M5 20v-6M12 20V8M19 20V3',flame:'M12 3c1 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-4 3-6 1 2 3 2 3-5z',pin:'M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z',bt:'M7 7l10 10-5 4V3l5 4L7 17',bell:'M6 17h12l-2-3V10a4 4 0 0 0-8 0v4zM10 20a2 2 0 0 0 4 0',sun:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 1v3M12 20v3M1 12h3M20 12h3M4 4l2 2M18 18l2 2M4 20l2-2M18 6l2-2'};
+$$('[data-i]').forEach(e=>e.innerHTML=`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="${e.dataset.c||'var(--acc)'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${I[e.dataset.i]}"/></svg>`);
+let S={hr:72,st:8542,b:85,run:false,hd:45,p:0,n:8};
+if(emb)document.body.classList.add('embed');
+$('#ticks').innerHTML=Array.from({length:60},(_,i)=>{const M=i%5==0;return`<line class="${M?'':'minor'}" x1="233" y1="${M?18:20}" x2="233" y2="${M?44:32}" stroke="${M?'var(--acc)':'#59626d'}" stroke-width="${M?6:2.5}" stroke-linecap="round" transform="rotate(${i*6} 233 233)"/>`}).join('');
+$('#dots').innerHTML=Array.from({length:S.n},(_,i)=>`<button aria-label="Page ${i+1}" data-p="${i}"></button>`).join('');
+function fit(){const k=Math.min(innerWidth-(emb?0:16),innerHeight-(emb?0:190),466)/466;W.style.transform=`scale(${k})`;$('#box').style.cssText=`width:${466*k}px;height:${466*k}px`}
+addEventListener('resize',fit);fit();
+const F={go(p){if(W.classList.contains('amb'))return;S.p=(p+S.n)%S.n;W.dataset.p=S.p;$$('.pg').forEach((e,i)=>e.classList.toggle('on',i==S.p));$$('#dots button').forEach((e,i)=>e.classList.toggle('on',i==S.p))},
+ mode(o){W.classList.toggle('amb',!!o);if(o){$$('.pg').forEach((e,i)=>e.classList.toggle('on',i==0))}else F.go(S.p);$('#b1').textContent=o?'Wake':'Ambient'},
+ an(o){W.classList.toggle('an',!!o);$('#b3').textContent=o?'Digital':'Analog'},run(o){S.run=!!o;$('#b2').textContent=o?'Stop':'Workout'},
+ acc(c){W.dataset.t=c},focus(k){$$('.hl').forEach(e=>e.classList.remove('hl'));k&&$('#'+k)&&$('#'+k).classList.add('hl')}};
+window.Watch=F;F.go(0);
+function clock(){const d=new Date();let h=d.getHours(),m=d.getMinutes(),s=d.getSeconds();if(fx){[h,m]=fx.split(':').map(Number);s=24}
+$('#hm').innerHTML=p2(h)+'<i class="co">:</i>'+p2(m);const ag=(s*6-90)*Math.PI/180;$('#comet').setAttribute('cx',233+198*Math.cos(ag));$('#comet').setAttribute('cy',233+198*Math.sin(ag));$('#ecm').setAttribute('cx',15+27*(1-Math.abs(2*((h*60+m)/1440)-1)));const dd=q.get('live')?d:new Date(2026,10,11);$('#date').textContent=p2(dd.getDate())+'/'+p2(dd.getMonth()+1)+'/'+dd.getFullYear();$('#day').textContent=dd.toLocaleDateString('en-GB',{weekday:'short'}).toUpperCase();
+$('#arc').style.strokeDashoffset=1244*(1-s/60);
+$('#hh').setAttribute('transform',`rotate(${(h%12)*30+m/2} 233 233)`);$('#mh').setAttribute('transform',`rotate(${m*6+s/10} 233 233)`);$('#sh').setAttribute('transform',`rotate(${s*6} 233 233)`);
+W.setAttribute('aria-label',`Time ${p2(h)}:${p2(m)}, heart rate ${Math.round(S.hr)}, battery ${Math.round(S.b)} percent`)}
+const rg=(id,v,c)=>$('#'+id).style.strokeDashoffset=c*(1-Math.min(1,v));
+function data(){S.hr=S.run?R(98,138):R(68,76);S.st+=S.run?R(3,7):(Math.random()<.2?1:0);const hr=Math.round(S.hr),st=Math.round(S.st),kc=Math.round(st*.04),km=st*.00075;
+$('#hr').textContent=hr;$('#h1').textContent=hr;$('#h2').textContent=Math.round(R(97,99))+'%';$('#h4').textContent=Math.round(S.run?R(40,55):R(20,30))+'%';
+$('#st0').textContent=$('#a1').textContent=st.toLocaleString('en-US');$('#a2').textContent=kc;$('#a3').textContent=km.toFixed(1)+' km';
+$('#bt').textContent=Math.round(S.b)+'%';$('#bf').setAttribute('width',17*S.b/100);rg('r1',st/10000,653);rg('r2',kc/500,515);rg('r3',km/8,377);
+S.hd=(S.hd+R(-3,3)+360)%360;$('#nd').setAttribute('transform',`rotate(${S.hd} 233 205)`);$('#hd').textContent=['N','NE','E','SE','S','SW','W','NW'][Math.round(S.hd/45)%8]+' '+Math.round(S.hd)+'°'}
+// stopwatch / timer
+let T={t:0,run:false,last:0,tm:false};
+function tfmt(){const v=T.tm?Math.max(0,300000-T.t):T.t,m=Math.floor(v/60000),s=Math.floor(v/1000)%60,c=Math.floor(v/10)%100;$('#swt').textContent=`${p2(m)}:${p2(s)}.${p2(c)}`}
+setInterval(()=>{if(T.run){const n=Date.now();T.t+=n-T.last;T.last=n;if(T.tm&&T.t>=300000){T.run=false;$('#sg').textContent='Start'}tfmt()}},50);
+$('#sg').onclick=()=>{T.run=!T.run;T.last=Date.now();$('#sg').textContent=T.run?'Stop':'Start'};
+$('#sr').onclick=()=>{T.t=0;T.run=false;$('#sg').textContent='Start';tfmt()};
+$('#sm').onclick=()=>{T.tm=!T.tm;T.t=0;T.run=false;$('#sg').textContent='Start';$('#sm').textContent='Mode: '+(T.tm?'Timer 5:00':'Stopwatch');tfmt()};
+let sd;$('#sos').onpointerdown=()=>{sd=setTimeout(()=>{$('#hd').textContent='SOS sent (simulated)'},1500)};['pointerup','pointerleave'].forEach(v=>$('#sos').addEventListener(v,()=>clearTimeout(sd)));
+// music, breathe, AOD burn-in shift
+let M={on:false,i:0,p:0};const TR=['Time Your Way','Golden Hour','Midnight Orbit'];
+F.music=o=>{M.on=!!o;$('#disc').classList.toggle('on',M.on);$('#mpl').textContent=M.on?'Pause':'Play'};
+const tk2=d=>{M.i=(M.i+d+3)%3;M.p=0;$('#trk').textContent=TR[M.i]};
+$('#mpl').onclick=()=>F.music(!M.on);$('#mnx').onclick=()=>tk2(1);$('#mpv').onclick=()=>tk2(-1);
+setInterval(()=>{if(M.on){M.p=(M.p+1)%180;$('#mp').style.width=M.p/180*100+'%'}},1000);
+let B={on:false,ph:0};F.breathe=o=>{B.on=!!o;B.ph=0;const e=$('#bre');e.style.animation='none';void e.offsetWidth;e.style.animation='';e.style.animationPlayState=o?'running':'paused';$('#bb').textContent=o?'Stop':'Start';$('#bz').textContent=o?'Inhale':'Ready'};
+$('#bb').onclick=()=>F.breathe(!B.on);setInterval(()=>{if(B.on){B.ph^=1;$('#bz').textContent=B.ph?'Exhale':'Inhale'}},4000);
+setInterval(()=>{const p=$('#p0');if(W.classList.contains('amb')){if(new Date().getSeconds()%30==0){const o=[[0,0],[2,1],[-2,-1],[1,-2],[-1,2]][Math.floor(Math.random()*5)];p.style.transform=`translate(${o[0]}px,${o[1]}px)`}}else p.style.transform=''},1000);
+// navigation
+let x0=null;W.addEventListener('pointerdown',e=>{x0=e.target.closest('button')?null:e.clientX});W.addEventListener('pointerup',e=>{if(x0!=null&&Math.abs(e.clientX-x0)>40)F.go(S.p+(e.clientX<x0?1:-1));x0=null});
+$('#dots').onclick=e=>e.target.dataset.p!=null&&F.go(+e.target.dataset.p);
+addEventListener('keydown',e=>{if(e.key=='ArrowRight')F.go(S.p+1);if(e.key=='ArrowLeft')F.go(S.p-1)});
+$('#bp').onclick=()=>F.go(S.p-1);$('#bn').onclick=()=>F.go(S.p+1);$('#b1').onclick=()=>F.mode(!W.classList.contains('amb'));$('#b3').onclick=()=>F.an(!W.classList.contains('an'));$('#b2').onclick=()=>F.run(!S.run);
+$$('.sw').forEach(b=>b.onclick=()=>F.acc(b.dataset.c));
+if(q.get('a'))F.an(true);if(q.get('p'))F.go(+q.get('p'));if(q.get('mode')==='amb')F.mode(true);if(q.get('c'))F.acc(q.get('c'));
+let idle=0;['click','keydown','touchstart'].forEach(v=>addEventListener(v,()=>{idle=0;if(W.classList.contains('amb')&&!emb&&!tour)F.mode(false)}));
+setInterval(()=>{clock();data();if(!fx&&!emb&&!tour){idle++;if(idle>=30)F.mode(true)}},1000);
+setInterval(()=>{if(!fx)S.b=Math.max(1,S.b-(S.run?.5:.15))},10000);
+// narrated tour
+const D=[[0,'This is ChronoFusion AI, an original smartwatch face for the theme Design Time Your Way. Obsidian black, brushed titanium and gold frame a large digital time that reads in one second, with date, weather, Bluetooth, notifications, heart rate, steps and battery around it.',()=>{F.mode(false);F.an(false);F.run(false);F.acc('gold')}],
+[0,'Signature detail: the Aurum Eclipse disc at the top darkens like an eclipse as the day passes, while a gold comet travels around the seconds arc.'],
+[0,'Switch to analog style and the same face shows sweeping hands, hour numerals and a date window.',()=>F.an(true)],
+[0,'Five colourways, including a titanium silver edition, let wearers personalise the look.',()=>{F.an(false);['cyan','emerald','rose','titanium','gold'].forEach((c,i)=>setTimeout(()=>F.acc(c),i*1500))}],
+[1,'The health page shows heart rate, blood oxygen, blood pressure, stress, sleep and body temperature at a glance.'],
+[2,'Activity rings track steps, calories and distance against daily goals, and update live during a workout.',()=>F.run(true)],
+[3,'Tools: a stopwatch and a five minute timer.',()=>{F.run(false);$('#sg').click()}],
+[4,'A compass shows your heading, and a press and hold S O S button would alert emergency contacts. Here it is simulated.',()=>{$('#sg').click()}],
+[5,'The weather page shows the current temperature, how it feels, an hourly outlook, and the day high and low.'],
+[6,'The music page has track controls, a spinning disc and a progress bar.',()=>F.music(true)],
+[7,'A guided breathing page paces inhaling and exhaling with a calm expanding circle to reduce stress.',()=>F.breathe(true)],
+[0,'Ambient mode is built for always-on displays: outlined digits light fewer pixels, only the essentials remain, and the layout shifts slightly every thirty seconds to prevent burn-in.',()=>F.mode(true)],
+[0,'Luxury design, smart health widgets, premium typography, a personalised experience and an optimised always-on display. Design Time Your Way. Thank you.',()=>F.mode(false)]];
+let tour=false,tk=-1,td;
+function step(i){if(!tour)return;if(i>=D.length)return stop('Tour finished.');tk=i;const d=D[i];F.mode(false);F.music(false);F.breathe(false);F.go(d[0]);try{d[2]&&d[2]()}catch(e){}
+$('#cap').textContent=`${i+1}/${D.length}: ${d[1]}`;
+const adv=()=>{if(tk===i&&tour){tk=-1;clearTimeout(td);setTimeout(()=>step(i+1),600)}};
+try{const u=new SpeechSynthesisUtterance(d[1]);u.onend=adv;u.onerror=adv;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}
+clearTimeout(td);td=setTimeout(adv,d[1].length*95+3000)}
+function stop(m){tour=false;tk=-1;clearTimeout(td);try{speechSynthesis.cancel()}catch(e){}$('#ts').disabled=false;$('#te').disabled=true;$('#cap').textContent=m||'Tour stopped.';F.mode(false);F.go(0);F.an(false);F.run(false);F.music(false);F.breathe(false)}
+$('#ts').onclick=()=>{tour=true;$('#ts').disabled=true;$('#te').disabled=false;step(0)};$('#te').onclick=()=>stop();
+window.addEventListener('message',e=>{const d=e.data||{};F[d.watch]&&F[d.watch](d.arg)});
+clock();data();
+</script></body></html>
